@@ -1,22 +1,15 @@
 const mongoose = require("mongoose");
-
 require("dotenv").config();
 
-<<<<<<< HEAD
-const dbConnect = async () => {
-  await mongoose
-    .connect(process.env.DATABASE_URL)
-=======
 const dbConnect = () => {
   mongoose
     .connect(process.env.DATABASE_URL, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-    })  
->>>>>>> 4ed39a7 (Deploying)
-    .then(() => console.log("Connection successful"))
+    })
+    .then(() => console.log("✅ Database connection successful"))
     .catch((error) => {
-      console.error(error.message);
+      console.error("❌ Database connection failed:", error.message);
       process.exit(1);
     });
 };

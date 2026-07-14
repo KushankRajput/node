@@ -26,12 +26,9 @@ const userSchema = new mongoose.Schema(
     otp_created_at: {
       type: Date,
     },
-<<<<<<< HEAD
     otpExpiry: {
       type: Date,
     },
-=======
->>>>>>> 4ed39a7 (Deploying)
     status: {
       type: String,
       default: "active",
@@ -54,11 +51,7 @@ const userSchema = new mongoose.Schema(
       default: "Visitor",
     },
   },
-<<<<<<< HEAD
   { timestamps: true },
-=======
-  { timestamps: true }
->>>>>>> 4ed39a7 (Deploying)
 );
 
 module.exports = mongoose.model("User", userSchema);

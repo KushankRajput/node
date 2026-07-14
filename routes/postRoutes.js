@@ -2,11 +2,7 @@ const express = require("express");
 const {
   createPost,
   getPosts,
-<<<<<<< HEAD
-  deletePost, 
-=======
   deletePost,
->>>>>>> 4ed39a7 (Deploying)
 } = require("../controllers/postController");
 const { createLike, deleteLike } = require("../controllers/likeController");
 const {
@@ -17,10 +13,7 @@ const {
 const {
   signup,
   login,
-<<<<<<< HEAD
   verifyOTP,
-=======
->>>>>>> 4ed39a7 (Deploying)
   getUsers,
   getUserDetails,
 } = require("../controllers/Auth");
@@ -160,10 +153,7 @@ router.post("/signup", signup);
  *         description: Login successful
  */
 router.post("/login", login);
-<<<<<<< HEAD
 router.post("/verify-otp", verifyOTP);
-=======
->>>>>>> 4ed39a7 (Deploying)
 
 /**
  * @swagger

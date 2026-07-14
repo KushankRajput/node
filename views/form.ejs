@@ -292,27 +292,17 @@
           </span>
         </div>
       </div>
-<<<<<<< HEAD
       <div id="message">
         <% if(message) { %>
-                  <h6 class="text-success" id="success"><%= message %></h6>
-        <% } %>  
+          <h6 class="text-success" id="success"><%= message %></h6>
+        <% } %>
       </div>
-=======
-          <% if(message) { %>
-                    <h6 class="text-success" id="success"><%= message %></h6>
-          <% } %>  
->>>>>>> 82d8eea (file upload)
       <!-- row 2: form with name, tags, emails, imageUrl as FILE -->
       <div class="row">
         <div class="col">
           <div class="form-group-custom">
             <form
-<<<<<<< HEAD
-              action="/api/v1/imageReduceUpload"
-=======
               action="/api/v1/upload/imageReduceUpload"
->>>>>>> 82d8eea (file upload)
               method="POST"
               enctype="multipart/form-data"
             >
@@ -481,13 +471,9 @@
 
       // Reset file input display if form is reset (optional)
       console.log("Form ready with name, tags, emails, and image FILE upload");
-<<<<<<< HEAD
-
       setTimeout(() => {
         document.getElementById("message").style.display = "none";
       }, 3000);
-=======
->>>>>>> 82d8eea (file upload)
     </script>
   </body>
 </html>

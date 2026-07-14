@@ -7,26 +7,21 @@ exports.localFileUpload = async (req, res) => {
   try {
     const file = req.files.file;
 
-    // Validate file existence
     if (!file) {
       return res.status(400).json({
         success: false,
         message: "No file uploaded. Please select a file.",
       });
     }
-    console.log("File", file);
-    let uploadpath =
+
+    const uploadpath =
       __dirname + "/files/" + Date.now() + `.${file.name.split(".")[1]}`;
-
-    // const uploadpath = __dirname + "/files/" + Date.now() + path.extname(file.name);
-
-    console.log(uploadpath);
 
     file.mv(uploadpath, (err) => {
       console.log(err);
     });
 
-    const fileData = await File.create({
+    await File.create({
       name: file.name,
       imageUrl: `file/${file.name}`,
     });
@@ -40,12 +35,8 @@ exports.localFileUpload = async (req, res) => {
   }
 };
 
-// This function verifies whether the type of image includes in the supported array
 function isFileTypeSupported(type, supportedFileType, fileSize) {
-  const max_size = 5 * 1024 * 1024; //5MB
-  console.log(fileSize);
-  console.log(type);
-  console.log(max_size);
+  const max_size = 5 * 1024 * 1024;
   if (fileSize > max_size) {
     return {
       success: false,
@@ -55,36 +46,27 @@ function isFileTypeSupported(type, supportedFileType, fileSize) {
   return supportedFileType.includes(type);
 }
 
-// Upload file to couldinary
 async function uploadFileToCloudinary(file, folder) {
   const options = { folder };
   options.resource_type = "auto";
   return await cloudinary.uploader.upload(file.tempFilePath, options);
 }
 
-// Image upload on cloudinary
 exports.imageUpload = async (req, res) => {
   try {
     const { name, email, tags } = req.body;
-    console.log(name, email, tags);
-
     const file = req.files.image;
 
-    // Validate file existence
     if (!file) {
       return res.status(400).json({
         success: false,
         message: "No file uploaded. Please select an image file.",
       });
     }
-    console.log(file);
 
     const supportedType = ["jpg", "jpeg", "png"];
-    // const fileType = path.extname(file.name).toLowerCase();
-    // or
     const fileType = `${file.name.split(".")[1]}`.toLowerCase();
 
-    // If file format not supported
     if (!isFileTypeSupported(fileType, supportedType, file.size)) {
       return res.status(400).json({
         success: false,
@@ -92,15 +74,11 @@ exports.imageUpload = async (req, res) => {
       });
     }
 
-    // If file format supported
-    console.log("uploading to images");
     const response = await uploadFileToCloudinary(file, "images");
-    console.log(response);
-    // save in db
-    const fileData = await File.create({
-      name: name,
-      tags: tags,
-      email: email,
+    await File.create({
+      name,
+      tags,
+      email,
       imageUrl: response.secure_url,
     });
 
@@ -117,7 +95,6 @@ exports.imageUpload = async (req, res) => {
   }
 };
 
-// Get data
 exports.getImages = async (req, res) => {
   try {
     const images = await File.find();
@@ -131,15 +108,11 @@ exports.getImages = async (req, res) => {
   }
 };
 
-// video upload
 exports.videoFileUpload = async (req, res) => {
   try {
     const { name, email, tags } = req.body;
-    console.log(name, email, tags);
-
     const file = req.files.file;
 
-    // Validate file existence
     if (!file) {
       return res.status(400).json({
         success: false,
@@ -150,7 +123,6 @@ exports.videoFileUpload = async (req, res) => {
     const supportedType = [".mp4", ".mov"];
     const fileType = path.extname(file.name).toLowerCase();
 
-    // If file format not supported
     if (!isFileTypeSupported(fileType, supportedType, file.size)) {
       return res.status(400).json({
         success: false,
@@ -158,15 +130,11 @@ exports.videoFileUpload = async (req, res) => {
       });
     }
 
-    // If file format supported
-    console.log("uploading video to images folder");
     const response = await uploadFileToCloudinary(file, "images");
-    console.log(response);
-    // save in db
-    const fileData = await File.create({
-      name: name,
-      tags: tags,
-      email: email,
+    await File.create({
+      name,
+      tags,
+      email,
       videoUrl: response.secure_url,
     });
 
@@ -183,7 +151,6 @@ exports.videoFileUpload = async (req, res) => {
   }
 };
 
-// for size reducer
 function isReduceFileTypeSupported(type, supportedFileType) {
   return supportedFileType.includes(type);
 }
@@ -197,34 +164,21 @@ async function uploadReduceFileToCloudinary(file, folder, quality) {
   return await cloudinary.uploader.upload(file.tempFilePath, options);
 }
 
-// Image size reducer
 exports.imageReduceUpload = async (req, res) => {
   try {
-    // res.send(req.body);
     const { name, email, tags } = req.body;
-    console.log(name, email, tags);
-
     const file = req.files.file;
 
-    // Validate file existence
     if (!file) {
       return res.status(400).json({
         success: false,
         message: "No file uploaded. Please select an image file.",
       });
     }
-    console.log(file);
 
-<<<<<<< HEAD
     const supportedType = ["jpg", "jpeg", "png", "webp"];
-=======
-    const supportedType = ["jpg", "jpeg", "png"];
->>>>>>> 82d8eea (file upload)
-    // const fileType = path.extname(file.name).toLowerCase();
-    // or
     const fileType = `${file.name.split(".")[1]}`.toLowerCase();
-    console.log("file type" + fileType);
-    // If file format not supported
+
     if (!isReduceFileTypeSupported(fileType, supportedType)) {
       return res.status(400).json({
         success: false,
@@ -232,25 +186,17 @@ exports.imageReduceUpload = async (req, res) => {
       });
     }
 
-    // If file format supported
-    console.log("uploading to images");
     const response = await uploadReduceFileToCloudinary(file, "images", 50);
-    console.log(response);
-    // save in db
-    const fileData = await File.create({
-      name: name,
-      tags: tags,
-      email: email,
+    await File.create({
+      name,
+      tags,
+      email,
       imageUrl: response.secure_url,
     });
 
-    // res.json({
-    //   status: true,
-    //   message: "file uploaded to cloudinary",
-    // });
     const message = `Hello ${name} , Your image uploaded successfully`;
     res.render("form", {
-      message: message,
+      message,
     });
   } catch (error) {
     console.log(error);
@@ -264,10 +210,9 @@ exports.imageReduceUpload = async (req, res) => {
 exports.renderView = (req, res) => {
   const name = "Kushank";
   res.render("home", {
-    name: name,
+    name,
   });
 };
-<<<<<<< HEAD
 
 exports.deleteAllImages = async (req, res) => {
   try {
@@ -288,5 +233,3 @@ exports.deleteAllImages = async (req, res) => {
     });
   }
 };
-=======
->>>>>>> 82d8eea (file upload)
