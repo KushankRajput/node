@@ -10,12 +10,9 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const dbConnect = require("./config/database");
 const postRoutes = require("./routes/postRoutes");
-<<<<<<< HEAD
 const fileUploadroute = require("./routes/Fileupload");
 const contactRoute = require("./routes/contactRoutes");
 const cors = require("cors");
-=======
->>>>>>> 4ed39a7 (Deploying)
 
 // Swagger
 const swaggerUi = require("swagger-ui-express");
@@ -29,23 +26,18 @@ const app = express();
 // ============================
 // Middlewares
 // ============================
-<<<<<<< HEAD
 app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false })); //for x-www-form-urlencoded in postman
+
 const fileUpload = require("express-fileupload");
-// app.use(fileUpload());
 app.use(
   fileUpload({
     useTempFiles: true,
     tempFileDir: "/tmp/",
   }),
 );
-=======
-app.use(cookieParser());
-app.use(express.json());
->>>>>>> 4ed39a7 (Deploying)
 
 // ============================
 // Swagger Configuration
@@ -75,23 +67,9 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // ============================
 // Routes
 // ============================
-<<<<<<< HEAD
 app.set("view engine", "ejs");
 
-app.use("/api/v1", postRoutes);
-app.use(express.urlencoded({ extended: false })); //for x-www-form-urlencoded in postman
-const fileUpload = require("express-fileupload");
-// app.use(fileUpload());
-app.use(
-  fileUpload({
-    useTempFiles: true,
-    tempFileDir: "/tmp/",
-  }),
-);
-
-// app.get("/", (req, res) => {
-//   res.send("<h1>Server Running</h1>");
-// });
+// Home route
 app.get("/", (req, res) => {
   res.send(`
     <!DOCTYPE html>
@@ -161,18 +139,31 @@ app.get("/", (req, res) => {
     </body>
     </html>
   `);
-=======
-app.use("/api/v1", postRoutes);
-
-app.get("/", (req, res) => {
-  res.send("<h1>Server Running</h1>");
->>>>>>> 4ed39a7 (Deploying)
 });
+
+// API routes
+app.use("/api/v1", postRoutes);
+app.use("/api/v1", fileUploadroute);
+app.use("/api/v1", contactRoute);
+
+// Form routes
+app.get("/form", (req, res) => {
+  res.render("form", { message: null });
+});
+
+app.post("/submit", (req, res) => {
+  const name = req.body.myName;
+  const message = `Hello ${name}, Your image uploaded successfully`;
+  res.render("form", {
+    message: message,
+  });
+}); // <-- This closing brace was missing!
 
 // ============================
 // DB Connection
 // ============================
 dbConnect();
+
 // Cloudinary connection
 const cloudinary = require("./config/cloudinary");
 cloudinary.cloudinaryConnect();
@@ -185,16 +176,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 App started at http://localhost:${PORT}`);
   console.log(`📄 Swagger Docs → http://localhost:${PORT}/api-docs`);
-});
-
-app.get("/form", (req, res) => {
-  res.render("form", { message: null });
-});
-
-app.post("/submit", (req, res) => {
-  const name = req.body.myName;
-  const message = `Hello ${name} , Your image uploaded successfully`;
-  res.render("form", {
-    message: message,
-  });
 });
