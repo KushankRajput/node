@@ -4,9 +4,9 @@ require("dotenv").config();
 const dbConnect = () => {
   mongoose
     .connect(process.env.DATABASE_URL)
-    .then(() => console.log("✅ Database connection successful"))
+    .then(() => console.log(" Database connection successful"))
     .catch((error) => {
-      console.error("❌ Database connection failed:", error.message);
+      console.error(" Database connection failed:", error.message);
       process.exit(1);
     });
 };

@@ -13,7 +13,6 @@ exports.contactUs = async (req, res) => {
 
     const html = `
       <h2>New Contact Us Request</h2>
-
       <table border="1" cellpadding="8" cellspacing="0">
         <tr>
           <th align="left">Full Name</th>
@@ -30,8 +29,9 @@ exports.contactUs = async (req, res) => {
       </table>
     `;
 
+    // This will now send to sqaurearspace@gmail.com
     await mailSender(
-      process.env.CONTACT_RECEIVER,
+      process.env.CONTACT_RECEIVER, // This reads from .env
       "New Contact Us Enquiry",
       html,
     );
@@ -42,7 +42,6 @@ exports.contactUs = async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-
     return res.status(500).json({
       success: false,
       message: err.message,

@@ -8,7 +8,7 @@ require("dotenv").config();
 // ============================
 const express = require("express");
 const cookieParser = require("cookie-parser");
-const dbConnect = require("./config/database");
+// const dbConnect = require("./config/database"); // Removed - not needed
 const postRoutes = require("./routes/postRoutes");
 const fileUploadroute = require("./routes/Fileupload");
 const contactRoute = require("./routes/contactRoutes");
@@ -29,7 +29,7 @@ const app = express();
 app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
-app.use(express.urlencoded({ extended: false })); //for x-www-form-urlencoded in postman
+app.use(express.urlencoded({ extended: false }));
 
 const fileUpload = require("express-fileupload");
 app.use(
@@ -60,8 +60,6 @@ const swaggerOptions = {
 };
 
 const swaggerSpec = swaggerJsDoc(swaggerOptions);
-
-// Swagger UI endpoint
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // ============================
@@ -69,7 +67,6 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // ============================
 app.set("view engine", "ejs");
 
-// Home route
 app.get("/", (req, res) => {
   res.send(`
     <!DOCTYPE html>
@@ -78,7 +75,6 @@ app.get("/", (req, res) => {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>API Server</title>
-
         <style>
             *{
                 margin:0;
@@ -86,7 +82,6 @@ app.get("/", (req, res) => {
                 box-sizing:border-box;
                 font-family:Arial, Helvetica, sans-serif;
             }
-
             body{
                 display:flex;
                 justify-content:center;
@@ -95,7 +90,6 @@ app.get("/", (req, res) => {
                 background:linear-gradient(135deg,#0f172a,#1e293b);
                 color:white;
             }
-
             .card{
                 text-align:center;
                 background:#ffffff15;
@@ -104,17 +98,14 @@ app.get("/", (req, res) => {
                 border-radius:15px;
                 box-shadow:0 10px 25px rgba(0,0,0,.3);
             }
-
             h1{
                 color:#22c55e;
                 margin-bottom:15px;
             }
-
             p{
                 color:#ddd;
                 margin-bottom:20px;
             }
-
             a{
                 display:inline-block;
                 text-decoration:none;
@@ -124,13 +115,11 @@ app.get("/", (req, res) => {
                 border-radius:8px;
                 font-weight:bold;
             }
-
             a:hover{
                 background:#16a34a;
             }
         </style>
     </head>
-
     <body>
         <div class="card">
             <h1>🚀 API Server is Running</h1>
@@ -141,12 +130,10 @@ app.get("/", (req, res) => {
   `);
 });
 
-// API routes
 app.use("/api/v1", postRoutes);
 app.use("/api/v1", fileUploadroute);
 app.use("/api/v1", contactRoute);
 
-// Form routes
 app.get("/form", (req, res) => {
   res.render("form", { message: null });
 });
@@ -157,12 +144,16 @@ app.post("/submit", (req, res) => {
   res.render("form", {
     message: message,
   });
-}); // <-- This closing brace was missing!
+});
 
 // ============================
-// DB Connection
+// DB Connection - REMOVED
 // ============================
-dbConnect();
+// dbConnect(); // <-- This line is removed
+
+console.log(process.env.MAIL_HOST);
+console.log(process.env.MAIL_PORT);
+console.log(process.env.MAIL_USER);
 
 // Cloudinary connection
 const cloudinary = require("./config/cloudinary");
@@ -177,3 +168,42 @@ app.listen(PORT, () => {
   console.log(`🚀 App started at http://localhost:${PORT}`);
   console.log(`📄 Swagger Docs → http://localhost:${PORT}/api-docs`);
 });
+
+// ============================
+// Mail Configuration
+// ============================
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+  host: process.env.MAIL_HOST,
+  port: Number(process.env.MAIL_PORT),
+  secure: false,
+  auth: {
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASS,
+  },
+});
+
+transporter.verify((err, success) => {
+  if (err) {
+    console.log("SMTP Error:", err);
+  } else {
+    console.log("SMTP Connected");
+  }
+});
+
+const mailSender = async (to, subject, html) => {
+  try {
+    return await transporter.sendMail({
+      from: `"${process.env.MAIL_FROM_NAME}" <${process.env.MAIL_FROM_ADDRESS}>`,
+      to,
+      subject,
+      html,
+    });
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+};
+
+module.exports = mailSender;
